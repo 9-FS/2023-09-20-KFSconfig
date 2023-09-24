@@ -43,10 +43,10 @@ def load_config(filepath: str, default_content: str="", empty_ok: bool=False) ->
                 file.write(default_content)                             # fill with default content
         except OSError:
             logger.error(f"\rCreating default \"{filepath}\" failed.")
+            raise FileNotFoundError(f"Error in {load_config.__name__}{inspect.signature(load_config)}: Loading \"{filepath}\" is not possible, because file does not exist. Creating default \"{filepath}\" failed.")
         else:
             logger.info(f"\rCreated default \"{filepath}\".")
-        logging.error(f"Loading \"{filepath}\" is not possible, because file did not exist.")
-        raise FileNotFoundError(f"Error in {load_config.__name__}{inspect.signature(load_config)}: Loading \"{filepath}\" is not possible, because file did not exist.")
+            raise FileNotFoundError(f"Error in {load_config.__name__}{inspect.signature(load_config)}: Loading \"{filepath}\" is not possible, because file did not exist. Created default \"{filepath}\".")
     
     elif os.path.isfile(filepath)==False and os.path.isdir(filepath)==True: # if input configuration file is a directory: can't do anything, error
         logger.error(f"Loading \"{filepath}\" is not possible, because it is a directory. Unable to create default file.")
@@ -60,11 +60,11 @@ def load_config(filepath: str, default_content: str="", empty_ok: bool=False) ->
     except OSError:                         # write to log, then forward exception
         logger.error(f"\rLoading \"{filepath}\" failed with OSError.")
         raise
+    else:
+        logger.info(f"\rLoaded \"{filepath}\".")
     
     if filecontent=="" and empty_ok==False:                         # but if content is empty and not allowed empty:
         logger.error(f"\rLoaded \"{filepath}\", but it is empty.")  # error
         raise ValueError(f"Error in {load_config.__name__}{inspect.signature(load_config)}: Loaded \"{filepath}\", but it is empty.")
-    
-    logger.info(f"\rLoaded \"{filepath}\".")
     
     return filecontent
