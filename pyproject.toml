@@ -5,7 +5,7 @@ license     = "MIT"
 name        = "KFSconfig"
 packages    = [{ include = "KFSconfig" }]
 readme      = "readme.md"
-repository  = "https://github.com/9-FS/2023-09-20-KFSconfig-Library"
+repository  = "https://github.com/9-FS/2023-09-20-KFSconfig"
 version     = "1.0.2"
 
 [tool.poetry.dependencies]

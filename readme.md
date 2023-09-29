@@ -1,11 +1,11 @@
 ---
-Topic: "KFSconfig Library"
+Topic: "KFSconfig"
 Author: "구FS"
 ---
 <link href="./doc_templates/md_style.css" rel="stylesheet"></link>
 <body>
 
-# <p style="text-align: center;">KFSconfig Library</p>
+# <p style="text-align: center;">KFSconfig</p>
 <br>
 <br>
 
