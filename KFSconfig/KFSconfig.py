@@ -5,7 +5,7 @@ import os
 from KFSlog import KFSlog
 
 
-def load_config(filepath: str, default_content: str="", empty_ok: bool=False) -> str:
+def load_config(filepath: str, default_content: str="", empty_ok: bool=False, encoding="utf8") -> str:
     """
     Tries to load text content from \"filepath\" and return it. If file does not exist, tries to create new file with default_content and then raises FileNotFoundError. If file does exist and is empty, may raise ValueError depending on empty_ok.
 
@@ -13,6 +13,7 @@ def load_config(filepath: str, default_content: str="", empty_ok: bool=False) ->
     - filepath: filepath to config file to read from or to create
     - defeault_content: if file at filepath does not exist: default config file content to use
     - empty_ok: if config file is empty: return empty string or raise ValueError
+    - encoding: encoding to use when reading and writing config file, more at https://docs.python.org/3/library/codecs.html#standard-encodings
 
     Returns:
     - filecontent: config file content
@@ -55,9 +56,9 @@ def load_config(filepath: str, default_content: str="", empty_ok: bool=False) ->
 
     logger.info(f"Loading \"{filepath}\"...")
     try:
-        with open(filepath, "rt") as file:  # read file
+        with open(filepath, "rt", encoding=encoding) as file:   # read file
             filecontent=file.read()
-    except OSError:                         # write to log, then forward exception
+    except OSError:                                             # write to log, then forward exception
         logger.error(f"\rLoading \"{filepath}\" failed with OSError.")
         raise
     else:
