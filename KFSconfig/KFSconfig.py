@@ -5,6 +5,60 @@ import os
 from KFSlog import KFSlog
 
 
+def force_input(prompt: str, inputs_allowed: list[str]=["y", "n"], tries_max: int=0, match_case_sensitive: bool=False) -> str:
+    """
+    Forces user to input a string from a list of allowed strings. If case_sensitive is false, input matching is case-insensitive but case of inputs_allowed is returned. If user input is not in inputs_allowed and tries_max has been exhausted, raises ValueError.
+
+    Arguments:
+    - prompt: message to (repeatedly) display to user prompting for input
+    - input_allowed: list of allowed user input
+    - tries_max: maximum number of tries allowed before raising ValueError, 0 for infinite
+    - match_case_sensitive: input evaluation case-sensitive or not
+
+    Returns:
+    - user_input_normalised: input string from inputs_allowed that user input matched
+
+    Raises:
+    - ValueError: user input is not in input_allowed and tries_max has been exhausted
+    """
+
+    input_allowed_matched: str  # entry from inputs_allowed that matched user input
+    logger: logging.Logger      # logger
+    try_current: int=0          # try current
+    user_input: str             # user input
+    
+
+    if 1<=len(logging.getLogger("").handlers):  # if root logger defined handlers:
+        logger=logging.getLogger("")            # also use root logger to match formats defined outside KFS
+    else:                                       # if no root logger defined:
+        logger=KFSlog.setup_logging("KFS")      # use KFS default format
+
+    if tries_max==0:    # if infinite tries:
+        tries_max=-1    # set tries_max to -1 to make while loop run infinitely
+
+
+    while try_current!=tries_max:   # as long as tries not exhausted: prompt for input
+        try_current+=1              # increment try_current
+        logger.info(prompt)         # prompt user for input
+        user_input=input()          # get user input
+        
+        if user_input in inputs_allowed:                                                                                                # try to find match case-sensitive and prefer that
+            input_allowed_matched=user_input
+            break
+        elif match_case_sensitive==False and user_input.casefold() in [input_allowed.casefold() for input_allowed in inputs_allowed]:   # if no match case-sensitive found and match case-insensitive allowed: fallback to try to find match case-insensitive
+            input_allowed_matched=next(input_allowed for input_allowed in inputs_allowed if input_allowed.casefold()==user_input.casefold())
+            break
+            
+        if try_current!=tries_max:  # if no match and not last try: try again
+            logger.warning(f"Input \"{user_input}\" is invalid. Trying again...")
+            continue
+        else:                       # if no match and last try: error
+            logger.error(f"Input \"{user_input}\" is invalid. Giving up.")
+            raise ValueError(f"Error in {force_input.__name__}{inspect.signature(force_input)}: Input \"{user_input}\" is invalid. Giving up.")
+        
+    return input_allowed_matched
+
+
 def load_config(filepath: str, default_content: str="", empty_ok: bool=False, encoding="utf8") -> str:
     """
     Tries to load text content from \"filepath\" and return it. If file does not exist, tries to create new file with default_content and then raises FileNotFoundError. If file does exist and is empty, may raise ValueError depending on empty_ok.
