@@ -102,6 +102,8 @@ def load_config(config_default: dict[str, typing.Any], env: bool=True, config_fi
                 config.update({k: v for k, v in _load_config_file(config_filepath).items() if k in config.keys() and config[k]==None})  # update config with config file, only overwrite if key already exists and value is None
             except (FileNotFoundError, IsADirectoryError):                                                                              # if fails: ignore source
                 pass
+    logger.debug(f"Loaded all config sources.")
+    logger.debug(config)
 
 
     if any(v==None for v in config.values())==True and setting_None_ok==False:                                                                                  # if any setting is still None and not allowed to be None: error
@@ -130,7 +132,21 @@ def _load_env() -> dict[str, typing.Any]:
     - passed environmental variables from os.environ
     """
 
-    return dict(os.environ)
+    config: dict[str, typing.Any]   # passed environmental variables
+
+
+    if 1<=len(logging.getLogger("").handlers):  # if root logger defined handlers:
+        logger=logging.getLogger("")            # also use root logger to match formats defined outside KFS
+    else:                                       # if no root logger defined:
+        logger=KFSlog.setup_logging("KFS")      # use KFS default format
+
+
+    logger.info(f"Loading environmental variables...")
+    config=dict(os.environ) # load environmental variables
+    logger.info(f"\rLoaded environmental variables.")
+    logger.debug(config)
+
+    return config
 
 
 def _load_config_file(config_filepath: str) -> dict[str, typing.Any]:
@@ -148,7 +164,7 @@ def _load_config_file(config_filepath: str) -> dict[str, typing.Any]:
     - IsADirectoryError: config_filepath is a directory
     """
 
-    config_filecontent: dict[str, typing.Any]   # content of config file
+    config: dict[str, typing.Any]   # config file
 
 
     if 1<=len(logging.getLogger("").handlers):  # if root logger defined handlers:
@@ -166,22 +182,23 @@ def _load_config_file(config_filepath: str) -> dict[str, typing.Any]:
 
     logger.info(f"Loading \"{config_filepath}\"...")
     try:
-        with open(config_filepath, "rt", encoding="utf8") as config_file:                                                                                                                           # read file
-            match os.path.basename(config_filepath).rsplit(".", 1)[-1]:                                                                                                                             # parse file content
+        with open(config_filepath, "rt", encoding="utf8") as config_file:                                                                                                               # read file
+            match os.path.basename(config_filepath).rsplit(".", 1)[-1]:                                                                                                                 # parse file content
                 case "env":
-                    config_filecontent={line.strip(" ").split("=")[0]: line.strip(" ").split("=")[1] for line in config_file.readlines() if "=" in line and line.strip(" ").startswith("#")==False} # parse env
+                    config={line.strip(" ").split("=")[0]: line.strip(" ").split("=")[1] for line in config_file.readlines() if "=" in line and line.strip(" ").startswith("#")==False} # parse env
                 case "json":
-                    config_filecontent=json.loads(config_file.read())                                                                                                                               # parse json
+                    config=json.loads(config_file.read())                                                                                                                               # parse json
                 case _:
                     logger.critical(f"\rLoading \"{config_filepath}\" failed, because file extension is not implemented.")
                     raise NotImplementedError(f"Error in {load_config.__name__}{inspect.signature(load_config)}: Loading \"{config_filepath}\" failed, because file extension is not implemented.")
-    except OSError as e:                                                                                                                                                                            # write to log, then forward exception
+    except OSError as e:                                                                                                                                                                # write to log, then forward exception
         logger.error(f"\rLoading \"{config_filepath}\" failed with {KFSfstr.full_class_name(e)}.")
         raise
     else:
         logger.info(f"\rLoaded \"{config_filepath}\".")
+        logger.debug(config)
     
-    return config_filecontent
+    return config
 
 
 def _create_default_file(config_default: dict[str, typing.Any], config_filepath: str) -> None:
@@ -225,6 +242,6 @@ def _create_default_file(config_default: dict[str, typing.Any], config_filepath:
         logger.error(f"\rCreating default \"{config_filepath}\" failed with {KFSfstr.full_class_name(e)}.")
         raise
     else:
-        logger.info(f"\rCreated default \"{config_filepath}\".")    
+        logger.info(f"\rCreated default \"{config_filepath}\".")
 
     return
