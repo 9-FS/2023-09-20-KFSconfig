@@ -32,13 +32,13 @@ files = [
 
 [[package]]
 name = "hypothesis"
-version = "6.100.1"
+version = "6.100.2"
 description = "A library for property-based testing"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "hypothesis-6.100.1-py3-none-any.whl", hash = "sha256:3dacf6ec90e8d14aaee02cde081ac9a17d5b70105e45e6ac822db72052c0195b"},
-    {file = "hypothesis-6.100.1.tar.gz", hash = "sha256:ebff09d7fa4f1fb6a855a812baf17e578b4481b7b70ec6d96496210d1a4c6c35"},
+    {file = "hypothesis-6.100.2-py3-none-any.whl", hash = "sha256:4ae5918f5a47f979e53fe9e8be4ba6edf17d7a133c13542938d8a6e18f890a2a"},
+    {file = "hypothesis-6.100.2.tar.gz", hash = "sha256:7d68e45d371cee5b9d2236516341aca57fb7f2cfabef6cb9e5b3a7ec62219cf2"},
 ]
 
 [package.dependencies]
@@ -91,18 +91,18 @@ kfsmath = ">=1.0.0,<2.0.0"
 
 [[package]]
 name = "kfslog"
-version = "1.0.1"
+version = "1.1.1"
 description = ""
 optional = false
-python-versions = ">=3.11.0,<4.0.0"
+python-versions = ">=3.12.0,<4.0.0"
 files = [
-    {file = "kfslog-1.0.1-py3-none-any.whl", hash = "sha256:e9c5b59282c453cc9b38c251220281fba28fb955c0e9fadf920bb29c30bd6cd9"},
-    {file = "kfslog-1.0.1.tar.gz", hash = "sha256:db1237d6704d09e7adc7ec798df01a281fcc5282bc3b81104d87b9607a42f03f"},
+    {file = "kfslog-1.1.1-py3-none-any.whl", hash = "sha256:cbda83b3f0c782bf6888bae3171f6a0180e31523d9c667e37e6f4605b3e4946f"},
+    {file = "kfslog-1.1.1.tar.gz", hash = "sha256:0c465d95b1f262570a7ea6ce093eb8b4d088bbb6771e78e9795e3adc8d810efd"},
 ]
 
 [package.dependencies]
 colorama = ">=0.4.6,<0.5.0"
-KFSfstr = ">=1.0.0,<2.0.0"
+kfsfstr = ">=1.1.0,<2.0.0"
 
 [[package]]
 name = "kfsmath"
@@ -128,13 +128,13 @@ files = [
 
 [[package]]
 name = "pluggy"
-version = "1.4.0"
+version = "1.5.0"
 description = "plugin and hook calling mechanisms for python"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "pluggy-1.4.0-py3-none-any.whl", hash = "sha256:7db9f7b503d67d1c5b95f59773ebb58a8c1c288129a88665838012cfb07b8981"},
-    {file = "pluggy-1.4.0.tar.gz", hash = "sha256:8c85c2876142a764e5b7548e7d9a0e0ddb46f5185161049a79b7e974454223be"},
+    {file = "pluggy-1.5.0-py3-none-any.whl", hash = "sha256:44e1ad92c8ca002de6377e165f3e0f1be63266ab4d554740532335b9d75ea669"},
+    {file = "pluggy-1.5.0.tar.gz", hash = "sha256:2cffa88e94fdc978c4c574f15f9e59b7f4201d439195c3715ca9e2486f1d0cf1"},
 ]
 
 [package.extras]
@@ -174,5 +174,5 @@ files = [
 
 [metadata]
 lock-version = "2.0"
-python-versions = "^3.11.0"
-content-hash = "83e03c077b875550ee473062aa94de7ba66a524c65cf7ba932a149c02da92dce"
+python-versions = "^3.12.0"
+content-hash = "ae7ce2c2df0df53f862a567967a5d2187498aef56970917b0c670313da20c2a6"
