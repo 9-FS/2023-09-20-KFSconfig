@@ -59,7 +59,7 @@ def force_input(prompt: str, inputs_allowed: list[str]=["y", "n"], tries_max: in
     return input_allowed_matched
 
 
-def load_config(config_default: dict[str, typing.Any], env: bool=True, config_filepaths: list[str]|None=["./.env", "./config/config.json"], setting_None_ok: bool=False) -> dict[str, typing.Any]:
+def load_config(env: bool=True, config_filepaths: list[str]|None=["./.env", "./config/config.json"], config_default: dict[str, typing.Any]={}, setting_None_ok: bool=False) -> dict[str, typing.Any]:
     """
     Tries to load config with the name of the config_default's keys. Multiple sources can be used and will be prioritised accordingly:
     1. if env is True: passed environemental variables from os.environ
@@ -115,7 +115,7 @@ def load_config(config_default: dict[str, typing.Any], env: bool=True, config_fi
             match force_input(f"Would you like to create a default \"{config_filepaths[0]}\"? (y/n)"):
                 case "y":
                     try:
-                        _create_default_file(config_default, config_filepaths[0])                                                                               # create default config file at highest priority filepath using config_default's values
+                        _create_default_file(config_filepaths[0], config_default)                                                                               # create default config file at highest priority filepath using config_default's values
                     except OSError:                                                                                                                             # if creating fails: error, if file already exists error because it should have been checked before
                         pass
                 case "n":
@@ -204,7 +204,7 @@ def _load_config_file(config_filepath: str) -> dict[str, typing.Any]:
     return config
 
 
-def _create_default_file(config_default: dict[str, typing.Any], config_filepath: str) -> None:
+def _create_default_file(config_filepath: str, config_default: dict[str, typing.Any]) -> None:
     """
     Creates a default config file at the specified filepath using config_default.
 
