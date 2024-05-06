@@ -68,15 +68,16 @@ def load_config(config_default: dict[str, typing.Any], env: bool=True, config_fi
     If any setting is undefined and none of the enabled filepaths exist, creation of a default config file at the highest priority filepath will be offered using config_default's values.
 
     Arguments:
-    - config_default: defaults to use for creation of a default config file
+    - config_default: defaults to use for creation of a default config file, unformatted file formats like .txt require key "content"
     - env: use passed environmental variables from os.environ?
-    - config_filepath: filepath to config files or None if unused
+    - config_filepath: filepath to config files or None if unused, formats depending on file extension, unformatted formats like .txt save raw string content from file in key "content"
     - setting_None_ok: allow settings to be None or require to be set?
 
     Returns:
     - config: loaded config, same keys as config_default
 
     Raises:
+    - KeyError: config_default is missing key "content" while trying to save raw string content
     - ValueError: After going through all enabled sources, a setting is still None and setting_None_ok is false.
     """
 
@@ -154,7 +155,7 @@ def _load_config_file(config_filepath: str) -> dict[str, typing.Any]:
     Loads a config file from the specified filepath and returns its content as a dictionary.
 
     Arguments:
-    - config_filepath: filepath to config file
+    - config_filepath: filepath to config file, interprets data depending on file extension, unformatted formats like .txt save raw string content from file in key "content"
 
     Returns:
     - config_filecontent: content of config file as a dictionary
@@ -188,6 +189,8 @@ def _load_config_file(config_filepath: str) -> dict[str, typing.Any]:
                     config={line.strip(" ").split("=")[0]: line.strip(" ").split("=")[1] for line in config_file.readlines() if "=" in line and line.strip(" ").startswith("#")==False} # parse env
                 case "json":
                     config=json.loads(config_file.read())                                                                                                                               # parse json
+                case "token" | "txt":
+                    config={"content": config_file.read()}                                                                                                                              # parse raw string
                 case _:
                     logger.critical(f"\rLoading \"{config_filepath}\" failed, because file extension is not implemented.")
                     raise NotImplementedError(f"Error in {load_config.__name__}{inspect.signature(load_config)}: Loading \"{config_filepath}\" failed, because file extension is not implemented.")
@@ -206,11 +209,12 @@ def _create_default_file(config_default: dict[str, typing.Any], config_filepath:
     Creates a default config file at the specified filepath using config_default.
 
     Arguments:
-    - config_default: defaults to use for creation of a default config file
-    - config_filepath: filepath to config file
+    - config_default: defaults to use for creation of a default config file, unformatted file formats like .txt require key "content"
+    - config_filepath: filepath to config file, formats depending on file extension, unformatted formats like .txt save raw string value from key "content" in file
 
     Raises:
     - FileExistsError: config_filepath already exists
+    - KeyError: config_default is missing key "content" while trying to save raw string content
     - NotImplementedError: file extension is not implemented yet
     - OSError: creating config_filepath failed
     """
@@ -235,9 +239,14 @@ def _create_default_file(config_default: dict[str, typing.Any], config_filepath:
                     config_file.write("\n".join([f"{k}={v}" for k, v in config_default.items()]))
                 case "json":
                     config_file.write(json.dumps(config_default, indent=4))
+                case "token" | "txt":
+                    config_file.write(config_default["content"])
                 case _:
                     logger.critical(f"\rCreating default \"{config_filepath}\" failed, because file extension is not implemented.")
                     raise NotImplementedError(f"Error in {load_config.__name__}{inspect.signature(load_config)}: Creating default \"{config_filepath}\" failed, because file extension is not implemented.")
+    except KeyError:
+        logger.error(f"\rCreating default \"{config_filepath}\" failed, because config_default is missing key \"content\".")
+        raise
     except OSError as e:
         logger.error(f"\rCreating default \"{config_filepath}\" failed with {KFSfstr.full_class_name(e)}.")
         raise
