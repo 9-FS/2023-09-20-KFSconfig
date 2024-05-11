@@ -82,6 +82,7 @@ def load_config(env: bool=True, config_filepaths: list[str]|None=["./.env", "./c
     """
 
     config: dict[str, typing.Any]={key: None for key in config_default.keys()}  # loaded config, initialised empty with same keys as config_default
+    sources_loaded: list[str]=[]                                                # sources loaded successfully
     
 
     if 1<=len(logging.getLogger("").handlers):  # if root logger defined handlers:
@@ -96,14 +97,17 @@ def load_config(env: bool=True, config_filepaths: list[str]|None=["./.env", "./c
 
     if env==True:
         config.update({k: v for k, v in _load_env().items() if k in config.keys() and config[k]==None}) # update config with environmental variables, only overwrite if key already exists and value is None
+        sources_loaded.append("environmental variables")                                                # log success
     
     if config_filepaths!=None and len(config_filepaths)!=0:
         for config_filepath in config_filepaths:
             try:
                 config.update({k: v for k, v in _load_config_file(config_filepath).items() if k in config.keys() and config[k]==None})  # update config with config file, only overwrite if key already exists and value is None
-            except (FileNotFoundError, IsADirectoryError):                                                                              # if fails: ignore source
+            except (FileNotFoundError, IsADirectoryError, OSError):                                                                     # if fails: ignore source
                 pass
-    logger.debug(f"Loaded all config sources.")
+            else:
+                sources_loaded.append(f"\"{config_filepath}\"")                                                                         # log success
+    logger.info(f"Loaded config from: {", ".join(sources_loaded)}")
     logger.debug(config)
 
 
@@ -141,9 +145,9 @@ def _load_env() -> dict[str, typing.Any]:
         logger=KFSlog.setup_logging("KFS")      # use KFS default format
 
 
-    logger.info(f"Loading environmental variables...")
+    logger.debug(f"Loading environmental variables...")
     config=dict(os.environ) # load environmental variables
-    logger.info(f"\rLoaded environmental variables.")
+    logger.debug(f"\rLoaded environmental variables.")
     logger.debug(config)
 
     return config
@@ -162,6 +166,8 @@ def _load_config_file(config_filepath: str) -> dict[str, typing.Any]:
     Raises:
     - FileNotFoundError: config_filepath does not exist
     - IsADirectoryError: config_filepath is a directory
+    - NotImplementedError: file extension is not implemented yet
+    - OSError: loading config_filepath failed
     """
 
     config: dict[str, typing.Any]   # config file
@@ -173,14 +179,14 @@ def _load_config_file(config_filepath: str) -> dict[str, typing.Any]:
         logger=KFSlog.setup_logging("KFS")      # use KFS default format
 
     if os.path.exists(config_filepath)==False:  # if config file does not exist: error
-        logger.error(f"Loading \"{config_filepath}\" failed, because it does not exist.")
-        raise FileNotFoundError(f"Error in {load_config.__name__}{inspect.signature(load_config)}: Loading \"{config_filepath}\" failed, because file does not exist.")
+        logger.warning(f"Loading \"{config_filepath}\" failed, because it does not exist. Source will be skipped.")
+        raise FileNotFoundError(f"Warning in {load_config.__name__}{inspect.signature(load_config)}: Loading \"{config_filepath}\" failed, because file does not exist. Source will be skipped.")
     if os.path.isdir(config_filepath)==True:    # if config file is a directory: error
-        logger.error(f"Loading \"{config_filepath}\" failed, because it is a directory.")
-        raise IsADirectoryError(f"Error in {load_config.__name__}{inspect.signature(load_config)}: Loading \"{config_filepath}\" failed, because it is a directory.")
+        logger.warning(f"Loading \"{config_filepath}\" failed, because it is a directory. Source will be skipped.")
+        raise IsADirectoryError(f"Warning in {load_config.__name__}{inspect.signature(load_config)}: Loading \"{config_filepath}\" failed, because it is a directory. Source will be skipped.")
 
 
-    logger.info(f"Loading \"{config_filepath}\"...")
+    logger.debug(f"Loading \"{config_filepath}\"...")
     try:
         with open(config_filepath, "rt", encoding="utf8") as config_file:                                                                                                               # read file
             match os.path.basename(config_filepath).rsplit(".", 1)[-1]:                                                                                                                 # parse file content
@@ -194,10 +200,10 @@ def _load_config_file(config_filepath: str) -> dict[str, typing.Any]:
                     logger.critical(f"\rLoading \"{config_filepath}\" failed, because file extension is not implemented.")
                     raise NotImplementedError(f"Error in {load_config.__name__}{inspect.signature(load_config)}: Loading \"{config_filepath}\" failed, because file extension is not implemented.")
     except OSError as e:                                                                                                                                                                # write to log, then forward exception
-        logger.error(f"\rLoading \"{config_filepath}\" failed with {KFSfstr.full_class_name(e)}.")
+        logger.warning(f"\rLoading \"{config_filepath}\" failed with {KFSfstr.full_class_name(e)}. Source will be skipped.")
         raise
     else:
-        logger.info(f"\rLoaded \"{config_filepath}\".")
+        logger.debug(f"\rLoaded \"{config_filepath}\".")
         logger.debug(config)
     
     return config
