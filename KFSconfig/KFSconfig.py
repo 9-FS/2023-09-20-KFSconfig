@@ -111,7 +111,6 @@ def load_config(env: bool=True, config_filepaths: list[str]|None=["./.env", "./c
         logger.error(f"After going through all enabled sources, settings {[k for k, v in config.items() if v==None]} are still None and setting_None_ok is false.")
         
         if config_filepaths!=None and 1<=len(config_filepaths) and all([os.path.exists(config_filepath)==False for config_filepath in config_filepaths])==True: # if a file source is enabled and no files at set filepaths exist: offer creation of default config file at highest priority filepath using config_default's values
-            logger.info(f"None of the following filepaths exist: {config_filepaths}")
             match force_input(f"Would you like to create a default \"{config_filepaths[0]}\"? (y/n)"):
                 case "y":
                     try:
