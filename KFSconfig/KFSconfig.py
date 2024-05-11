@@ -166,11 +166,11 @@ def _load_config_file(config_filepath: str) -> dict[str, typing.Any]:
     Raises:
     - FileNotFoundError: config_filepath does not exist
     - IsADirectoryError: config_filepath is a directory
-    - NotImplementedError: file extension is not implemented yet
     - OSError: loading config_filepath failed
     """
 
     config: dict[str, typing.Any]   # config file
+    defaulted: bool=False           # defaulted to forwarding raw string content?
 
 
     if 1<=len(logging.getLogger("").handlers):  # if root logger defined handlers:
@@ -197,13 +197,16 @@ def _load_config_file(config_filepath: str) -> dict[str, typing.Any]:
                 case "token" | "txt":
                     config={"content": config_file.read()}                                                                                                                              # parse raw string
                 case _:
-                    logger.critical(f"\rLoading \"{config_filepath}\" failed, because file extension is not implemented.")
-                    raise NotImplementedError(f"Error in {load_config.__name__}{inspect.signature(load_config)}: Loading \"{config_filepath}\" failed, because file extension is not implemented.")
+                    defaulted=True                                                                                                                                                      # defaulted to forwarding raw string content
+                    config={"content": config_file.read()}                                                                                                                              # parse raw string
     except OSError as e:                                                                                                                                                                # write to log, then forward exception
         logger.warning(f"\rLoading \"{config_filepath}\" failed with {KFSfstr.full_class_name(e)}. Source will be skipped.")
         raise
     else:
-        logger.debug(f"\rLoaded \"{config_filepath}\".")
+        if defaulted==False:
+            logger.debug(f"\rLoaded \"{config_filepath}\".")
+        else:                   # if defaulted to forwarding raw string content: warn
+            logger.warning(f"\rLoaded \"{config_filepath}\", but custom behaviour for file extension \"{os.path.basename(config_filepath).rsplit(".", 1)[-1]}\" is not implemented. Defaulted to forwarding content unchanged into key \"content\".")
         logger.debug(config)
     
     return config
@@ -220,9 +223,11 @@ def _create_default_file(config_filepath: str, config_default: dict[str, typing.
     Raises:
     - FileExistsError: config_filepath already exists
     - KeyError: config_default is missing key "content" while trying to save raw string content
-    - NotImplementedError: file extension is not implemented yet
     - OSError: creating config_filepath failed
     """
+
+    defaulted: bool=False   # defaulted to forwarding raw string content?
+
 
     if 1<=len(logging.getLogger("").handlers):  # if root logger defined handlers:
         logger=logging.getLogger("")            # also use root logger to match formats defined outside KFS
@@ -247,8 +252,8 @@ def _create_default_file(config_filepath: str, config_default: dict[str, typing.
                 case "token" | "txt":
                     config_file.write(config_default["content"])
                 case _:
-                    logger.critical(f"\rCreating default \"{config_filepath}\" failed, because file extension is not implemented.")
-                    raise NotImplementedError(f"Error in {load_config.__name__}{inspect.signature(load_config)}: Creating default \"{config_filepath}\" failed, because file extension is not implemented.")
+                    defaulted=True                                          # defaulted to forwarding raw string content
+                    config_file.write(config_default["content"])
     except KeyError:
         logger.error(f"\rCreating default \"{config_filepath}\" failed, because config_default is missing key \"content\".")
         raise
@@ -256,6 +261,9 @@ def _create_default_file(config_filepath: str, config_default: dict[str, typing.
         logger.error(f"\rCreating default \"{config_filepath}\" failed with {KFSfstr.full_class_name(e)}.")
         raise
     else:
-        logger.info(f"\rCreated default \"{config_filepath}\".")
+        if defaulted==False:
+            logger.info(f"\rCreated default \"{config_filepath}\".")
+        else:                   # if defaulted to forwarding raw string content: warn
+            logger.warning(f"Created default \"{config_filepath}\", but custom behaviour for file extension \"{os.path.basename(config_filepath).rsplit(".", 1)[-1]}\" is not implemented. Defaulted to forwarding content unchanged from key \"content\".")
 
     return
