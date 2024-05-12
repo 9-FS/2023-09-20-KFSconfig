@@ -107,7 +107,8 @@ def load_config(env: bool=True, config_filepaths: list[str]|None=["./.env", "./c
                 pass
             else:
                 sources_loaded.append(f"\"{config_filepath}\"")                                                                         # log success
-    logger.info(f"Loaded config from: {", ".join(sources_loaded)}")
+    if 1<=len(sources_loaded):  # if source loaded: log
+        logger.info(f"Loaded config from: {", ".join(sources_loaded)}")
     logger.debug(config)
 
 
