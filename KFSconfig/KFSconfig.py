@@ -116,6 +116,8 @@ def load_config(env: bool=True, config_filepaths: list[str]|None=["./.env", "./c
         logger.info(f"Loaded config from: {", ".join(sources_loaded)}")
 
     for k, v in config.items():
+        if v==None:                                 # if setting is still None: do not convert data type
+            continue
         try:
             config[k]=type(config_default[k])(v)    # convert data types to match data types given in config_default
         except TypeError:                           # not using dict comprehension to enable proper error messages here
