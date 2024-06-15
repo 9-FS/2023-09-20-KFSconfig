@@ -64,7 +64,7 @@ def load_config(env: bool=True, config_filepaths: list[str]|None=["./.env", "./c
     Tries to load config with the name of the config_default's keys. Multiple sources can be used and will be prioritised accordingly:
     1. if env is True: passed environemental variables from os.environ
     2. if config_filepath is not None: config from file at filepath with decreasing priority
-    
+
     If any setting is still None after all sources have been tried and setting_None_ok is false, it is considered undefined and a ValueError is raised.
     If any setting is undefined and none of the enabled filepaths exist, creation of a default config file at the highest priority filepath will be offered using config_default's values.
     Depending on the file extension, the loaded data is stored differently, either using the whole dictionary or only using key "content". See argument config_default for details, same rules apply.
@@ -101,23 +101,29 @@ def load_config(env: bool=True, config_filepaths: list[str]|None=["./.env", "./c
 
 
     if env==True:
-        config.update({k: v for k, v in _load_env().items() if k in config.keys() and config[k]==None}) # update config with environmental variables, only overwrite if key already exists and value is None
+        config.update({k: v for k, v in _load_env().items() if k in config.keys() and config[k]==None}) # update config with environmental variables, only overwrite if key already exists and value is still None
         sources_loaded.append("environmental variables")                                                # log success
 
     if config_filepaths!=None and len(config_filepaths)!=0:
         for config_filepath in config_filepaths:
             try:
-                config.update({k: v for k, v in _load_config_file(config_filepath).items() if k in config.keys() and config[k]==None})  # update config with config file, only overwrite if key already exists and value is None
+                config.update({k: v for k, v in _load_config_file(config_filepath).items() if k in config.keys() and config[k]==None})  # update config with config file, only overwrite if key already exists and value is still None
             except (FileNotFoundError, IsADirectoryError, OSError):                                                                     # if fails: ignore source
                 pass
             else:
                 sources_loaded.append(f"\"{config_filepath}\"")                                                                         # log success
-    if 1<=len(sources_loaded):  # if source loaded: log
+    if 1<=len(sources_loaded):                                                                                                          # if source loaded: log
         logger.info(f"Loaded config from: {", ".join(sources_loaded)}")
+
+    for k, v in config.items():
+        try:
+            config[k]=type(config_default[k])(v)    # convert data types to match data types given in config_default
+        except TypeError:                           # not using dict comprehension to enable proper error messages here
+            logger.warning(f"Converting data type of setting \"{k}\" from \"{type(v)}\" to \"{type(config_default[k])}\" failed. Using raw value: {v}")
     logger.debug(config)
 
 
-    if any(v==None for v in config.values())==True and setting_None_ok==False:                                                                                  # if any setting is still None and not allowed to be None: error
+    if any(v==None for v in config.values())==True and setting_None_ok==False:  # if any setting is still None and not allowed to be None: error
         logger.error(f"After going through all enabled sources, settings {[k for k, v in config.items() if v==None]} are still None and setting_None_ok is false.")
 
         if config_filepaths!=None and 1<=len(config_filepaths) and all([os.path.exists(config_filepath)==False for config_filepath in config_filepaths])==True: # if a file source is enabled and no files at set filepaths exist: offer creation of default config file at highest priority filepath using config_default's values

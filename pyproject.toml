@@ -6,7 +6,7 @@ name        = "KFSconfig"
 packages    = [{ include = "KFSconfig" }]
 readme      = "readme.md"
 repository  = "https://github.com/9-FS/2023-09-20-KFSconfig"
-version     = "2.2.0"
+version     = "2.3.0"
 
 [tool.poetry.dependencies]
 kfslog = "^2.0.0"
