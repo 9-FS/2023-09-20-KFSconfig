@@ -4,8 +4,8 @@ import json
 import logging
 import os
 import typing
-from KFSfstr import KFSfstr
-from KFSlog  import KFSlog
+from kfsfstr import kfsfstr
+from kfslog  import kfslog
 
 
 def force_input(prompt: str, inputs_allowed: list[str]=["y", "n"], tries_max: int=-1, match_case_sensitive: bool=False) -> str:
@@ -32,9 +32,9 @@ def force_input(prompt: str, inputs_allowed: list[str]=["y", "n"], tries_max: in
 
 
     if 1<=len(logging.getLogger("").handlers):  # if root logger defined handlers:
-        logger=logging.getLogger("")            # also use root logger to match formats defined outside KFS
+        logger=logging.getLogger("")            # also use root logger to match formats defined outside kfs
     else:                                       # if no root logger defined:
-        logger=KFSlog.setup_logging("KFS")      # use KFS default format
+        logger=kfslog.setup_logging("kfs")      # use kfs default format
 
 
     while try_current!=tries_max:   # as long as tries not exhausted: prompt for input
@@ -91,9 +91,9 @@ def load_config(env: bool=True, config_filepaths: list[str]|None=["./.env", "./c
 
 
     if 1<=len(logging.getLogger("").handlers):  # if root logger defined handlers:
-        logger=logging.getLogger("")            # also use root logger to match formats defined outside KFS
+        logger=logging.getLogger("")            # also use root logger to match formats defined outside kfs
     else:                                       # if no root logger defined:
-        logger=KFSlog.setup_logging("KFS")      # use KFS default format
+        logger=kfslog.setup_logging("kfs")      # use kfs default format
 
     if env==False and (config_filepaths==None or len(config_filepaths)==0): # if no source enabled: error
         logger.error(f"No config source is enabled. Loading config is impossible.")
@@ -154,9 +154,9 @@ def _load_env() -> dict[str, typing.Any]:
 
 
     if 1<=len(logging.getLogger("").handlers):  # if root logger defined handlers:
-        logger=logging.getLogger("")            # also use root logger to match formats defined outside KFS
+        logger=logging.getLogger("")            # also use root logger to match formats defined outside kfs
     else:                                       # if no root logger defined:
-        logger=KFSlog.setup_logging("KFS")      # use KFS default format
+        logger=kfslog.setup_logging("kfs")      # use kfs default format
 
 
     logger.debug(f"Loading environmental variables...")
@@ -188,9 +188,9 @@ def _load_config_file(config_filepath: str) -> dict[str, typing.Any]:
 
 
     if 1<=len(logging.getLogger("").handlers):  # if root logger defined handlers:
-        logger=logging.getLogger("")            # also use root logger to match formats defined outside KFS
+        logger=logging.getLogger("")            # also use root logger to match formats defined outside kfs
     else:                                       # if no root logger defined:
-        logger=KFSlog.setup_logging("KFS")      # use KFS default format
+        logger=kfslog.setup_logging("kfs")      # use kfs default format
 
     if os.path.exists(config_filepath)==False:  # if config file does not exist: error
         logger.warning(f"Loading \"{config_filepath}\" failed, because it does not exist. Source will be skipped.")
@@ -216,7 +216,7 @@ def _load_config_file(config_filepath: str) -> dict[str, typing.Any]:
                     defaulted=True                                                                                                                                                      # defaulted to forwarding raw string content
                     config={"content": config_file.read()}                                                                                                                              # parse raw string
     except OSError as e:                                                                                                                                                                # write to log, then forward exception
-        logger.warning(f"\rLoading \"{config_filepath}\" failed with {KFSfstr.full_class_name(e)}. Source will be skipped.")
+        logger.warning(f"\rLoading \"{config_filepath}\" failed with {kfsfstr.full_class_name(e)}. Source will be skipped.")
         raise
     else:
         if defaulted==False:
@@ -246,9 +246,9 @@ def _create_default_file(config_filepath: str, config_default: dict[str, typing.
 
 
     if 1<=len(logging.getLogger("").handlers):  # if root logger defined handlers:
-        logger=logging.getLogger("")            # also use root logger to match formats defined outside KFS
+        logger=logging.getLogger("")            # also use root logger to match formats defined outside kfs
     else:                                       # if no root logger defined:
-        logger=KFSlog.setup_logging("KFS")      # use KFS default format
+        logger=kfslog.setup_logging("kfs")      # use kfs default format
 
     if os.path.exists(config_filepath)==True:   # if config filepath already exists: error
         logger.error(f"Creating \"{config_filepath}\" is not possible, because it already exists.")
@@ -277,7 +277,7 @@ def _create_default_file(config_filepath: str, config_default: dict[str, typing.
         logger.error(f"\rCreating default \"{config_filepath}\" failed, because config_default is missing key \"content\".")
         raise
     except OSError as e:
-        logger.error(f"\rCreating default \"{config_filepath}\" failed with {KFSfstr.full_class_name(e)}.")
+        logger.error(f"\rCreating default \"{config_filepath}\" failed with {kfsfstr.full_class_name(e)}.")
         raise
     else:
         if defaulted==False:

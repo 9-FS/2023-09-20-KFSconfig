@@ -32,13 +32,13 @@ files = [
 
 [[package]]
 name = "hypothesis"
-version = "6.103.2"
+version = "6.108.2"
 description = "A library for property-based testing"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "hypothesis-6.103.2-py3-none-any.whl", hash = "sha256:629b7cdeca8c225933739f99879caba21949000d2c919c8b4585e01048b3bc73"},
-    {file = "hypothesis-6.103.2.tar.gz", hash = "sha256:83504e31e90a0d7d6e8eb93e51525dc1a48d79c932a50ad6035e29f8295328cd"},
+    {file = "hypothesis-6.108.2-py3-none-any.whl", hash = "sha256:2341d21d0e956bad8bd6269aa7d4f3233507f3ed52380c60ceb2f8b71f87a8e5"},
+    {file = "hypothesis-6.108.2.tar.gz", hash = "sha256:62cf1c16bd98548b6a84007c5fb8cf6d9cb358dad870adb4f236c795ef162fdd"},
 ]
 
 [package.dependencies]
@@ -46,10 +46,10 @@ attrs = ">=22.2.0"
 sortedcontainers = ">=2.1.0,<3.0.0"
 
 [package.extras]
-all = ["backports.zoneinfo (>=0.2.1)", "black (>=19.10b0)", "click (>=7.0)", "crosshair-tool (>=0.0.54)", "django (>=3.2)", "dpcontracts (>=0.4)", "hypothesis-crosshair (>=0.0.4)", "lark (>=0.10.1)", "libcst (>=0.3.16)", "numpy (>=1.17.3)", "pandas (>=1.1)", "pytest (>=4.6)", "python-dateutil (>=1.4)", "pytz (>=2014.1)", "redis (>=3.0.0)", "rich (>=9.0.0)", "tzdata (>=2024.1)"]
+all = ["backports.zoneinfo (>=0.2.1)", "black (>=19.10b0)", "click (>=7.0)", "crosshair-tool (>=0.0.61)", "django (>=3.2)", "dpcontracts (>=0.4)", "hypothesis-crosshair (>=0.0.7)", "lark (>=0.10.1)", "libcst (>=0.3.16)", "numpy (>=1.17.3)", "pandas (>=1.1)", "pytest (>=4.6)", "python-dateutil (>=1.4)", "pytz (>=2014.1)", "redis (>=3.0.0)", "rich (>=9.0.0)", "tzdata (>=2024.1)"]
 cli = ["black (>=19.10b0)", "click (>=7.0)", "rich (>=9.0.0)"]
 codemods = ["libcst (>=0.3.16)"]
-crosshair = ["crosshair-tool (>=0.0.54)", "hypothesis-crosshair (>=0.0.4)"]
+crosshair = ["crosshair-tool (>=0.0.61)", "hypothesis-crosshair (>=0.0.7)"]
 dateutil = ["python-dateutil (>=1.4)"]
 django = ["django (>=3.2)"]
 dpcontracts = ["dpcontracts (>=0.4)"]
@@ -75,45 +75,33 @@ files = [
 
 [[package]]
 name = "kfsfstr"
-version = "1.1.2"
+version = "2.0.0"
 description = ""
 optional = false
 python-versions = "<4.0.0,>=3.12.0"
 files = [
-    {file = "kfsfstr-1.1.2-py3-none-any.whl", hash = "sha256:effb79562013d3a84c878ec94252d52f5af4d9eb02183073b04fc584e5a958eb"},
-    {file = "kfsfstr-1.1.2.tar.gz", hash = "sha256:8d4f2d5fa2240f58276f9048e0a6bafcaa3b9e4742db159631ee6d85fab23a2c"},
+    {file = "kfsfstr-2.0.0-py3-none-any.whl", hash = "sha256:bed7bff918ed52dfc68ffcb098392f812aa3b4e6a80ab1de15c6616c93191f9e"},
+    {file = "kfsfstr-2.0.0.tar.gz", hash = "sha256:10e2f9b667d86c5ba466d9b186deac72d9de4ade59e6366413448fb7eac29ad7"},
 ]
 
 [package.dependencies]
 colorama = ">=0.4.0,<0.5.0"
-kfsmath = ">=1.0.0,<2.0.0"
 
 [[package]]
 name = "kfslog"
-version = "2.0.1"
+version = "3.0.0"
 description = ""
 optional = false
 python-versions = "<4.0.0,>=3.12.0"
 files = [
-    {file = "kfslog-2.0.1-py3-none-any.whl", hash = "sha256:142a934a01eaeca786b446c16b725bf0388ff3087184ceefe807dfe82a4cecc5"},
-    {file = "kfslog-2.0.1.tar.gz", hash = "sha256:df2f0f852a92a4db8316c4d4f7208fc9d6cd9b68e4b44111887bc602d4328500"},
+    {file = "kfslog-3.0.0-py3-none-any.whl", hash = "sha256:82f8521d425789204ce56cdb8630715b0a76f00806196431058f768d60c19ad9"},
+    {file = "kfslog-3.0.0.tar.gz", hash = "sha256:5cb444cfd111ddfd7785c4063a6acffc480a5357b78c7a6b713df14cea17bf3b"},
 ]
 
 [package.dependencies]
 colorama = ">=0.4.6,<0.5.0"
-kfsfstr = ">=1.1.0,<2.0.0"
+kfsfstr = ">=2.0.0,<3.0.0"
 result = ">=0.16.0,<0.17.0"
-
-[[package]]
-name = "kfsmath"
-version = "1.0.2"
-description = ""
-optional = false
-python-versions = "<4.0.0,>=3.12.0"
-files = [
-    {file = "kfsmath-1.0.2-py3-none-any.whl", hash = "sha256:03f4fefb420e014faa822e6af5a231023616a8d3d863138fd0f2b8bcbee68b4e"},
-    {file = "kfsmath-1.0.2.tar.gz", hash = "sha256:f2e74102132500c6738c918d0029cd3810c3473cec1ebaebe2df082a66fcde7a"},
-]
 
 [[package]]
 name = "packaging"
@@ -186,4 +174,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12.0"
-content-hash = "ddad5f96ea015adf5de3c9954274efa6309229cf967569c1c39c3994f9b106c9"
+content-hash = "14cb537bff061ab6a02c6b5e5c6210af7db5480791d43ebbe64fd23031a52c86"
